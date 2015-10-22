@@ -128,7 +128,7 @@ int main(int argc, char * argv[]) {
         for(int i = 0; i < num_requests; i++){
             average_time += request_times[i];
         }
-        average_time = run_time/num_requests;
+        average_time = average_time/num_requests;
         
         cout << "-- RESULTS: Program took " << run_time/1000 << " milliseconds to perform " << num_requests << " calls" << endl;
         cout << "-- RESULTS: Average request time: " << average_time << endl;
