@@ -10,4 +10,3 @@ dataserver: dataserver.cpp reqchannel.o
 
 client: client.cpp reqchannel.o
 	g++-4.7 -o client client.cpp reqchannel.o
-	h
