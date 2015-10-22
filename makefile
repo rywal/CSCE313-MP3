@@ -2,10 +2,10 @@
 UNAME := $(shell uname)
 ifeq ($(UNAME), Darwin)
     cc = clang++
-endif
-
-ifeq ($(UNAME), SunOS)
+else ifeq ($(UNAME), Darwin)
     cc = g++
+else
+    cc = g++-4.7
 endif
 
 all: dataserver client
