@@ -75,6 +75,9 @@ int main(int argc, char * argv[]) {
         // this process is the 'child', so run the dataserver
         system("./dataserver");
     } else {
+        int num_requests = 10000;
+        long long int request_times[num_requests];
+        
         cout << "CLIENT STARTED:" << endl;
 
         cout << "Establishing control channel... " << flush;
@@ -85,6 +88,7 @@ int main(int argc, char * argv[]) {
                                           post_request_time,        // Time at end of server request
                                           pre_local_request_time,   // Time at start of local request
                                           post_local_request_time;  // Time at end of local request
+        long long int run_time;
         
 
 
@@ -99,7 +103,7 @@ int main(int argc, char * argv[]) {
         string reply3 = chan.send_request("data Jane Smith");
         cout << "Reply to request 'data Jane Smith' is '" << reply3 << "'" << endl;
 
-        for(int i = 0; i < 100000; i++) {
+        for(int i = 0; i < num_requests; i++) {
             string request_string("data TestPerson" + int2string(i));
             
             pre_request_time = high_resolution_clock::now();
@@ -107,13 +111,26 @@ int main(int argc, char * argv[]) {
             post_request_time = high_resolution_clock::now();
             
             auto duration = std::chrono::duration_cast<std::chrono::microseconds>( post_request_time - pre_request_time ).count();
+            run_time += duration;
+            
+            request_times[i] = duration;
             
             cout << "reply to request took " << duration << " microseconds round-trip " << i << ":" << reply_string << endl;;
         }
-
+        
         string reply4 = chan.send_request("quit");
         cout << "Reply to request 'quit' is '" << reply4 << endl;
 
         usleep(1000000);
+        
+        
+        double average_time = 0;
+        for(int i = 0; i < num_requests; i++){
+            average_time += request_times[i];
+        }
+        average_time = run_time/num_requests;
+        
+        cout << "-- RESULTS: Program took " << run_time/1000 << " milliseconds to perform " << num_requests << " calls" << endl;
+        cout << "-- RESULTS: Average request time: " << average_time << endl;
     }
 }
