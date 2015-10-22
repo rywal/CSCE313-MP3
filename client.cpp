@@ -99,7 +99,7 @@ int main(int argc, char * argv[]) {
         string reply3 = chan.send_request("data Jane Smith");
         cout << "Reply to request 'data Jane Smith' is '" << reply3 << "'" << endl;
 
-        for(int i = 0; i < 10000; i++) {
+        for(int i = 0; i < 100000; i++) {
             string request_string("data TestPerson" + int2string(i));
             
             pre_request_time = high_resolution_clock::now();
