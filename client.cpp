@@ -23,6 +23,7 @@
 #include <cmath>
 #include <string>
 #include <iostream>
+#include <iomanip>
 #include <sstream>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -136,9 +137,13 @@ int main(int argc, char * argv[]) {
             standard_deviation += ((request_times[i]-average_time)*(request_times[i]-average_time));
         }
         standard_deviation = sqrt(standard_deviation/(num_requests-1));
-        
-        cout << "-- RESULTS: Program took " << run_time/1000 << " milliseconds to perform " << num_requests << " calls" << endl;
-        cout << "-- RESULTS: Average request time: " << average_time << endl;
-        cout << "-- RESULTS: Standard deviation: " << standard_deviation << endl;
+        cout << " -------------------------------------------- " << endl;
+        cout << "|                   Results                  |" << endl;
+        cout << "|--------------------------------------------|" << endl;
+        cout << "| Run-time:         |" << setw(10) << run_time/1000 << " milliseconds |" << endl;
+        cout << "| # of requests     |" << setw(23) << num_requests << " |" << endl;
+        cout << "| Avg. Request Time |" << setw(23) << average_time << " |" << endl;
+        cout << "| Stand. Deviation  |" << setw(23) << standard_deviation << " |" << endl;
+        cout << " -------------------------------------------- " << endl;
     }
 }
