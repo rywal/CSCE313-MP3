@@ -20,6 +20,7 @@
 /*--------------------------------------------------------------------------*/
 #include <cstdlib>
 #include <cassert>
+#include <cmath>
 #include <string>
 #include <iostream>
 #include <sstream>
@@ -75,7 +76,7 @@ int main(int argc, char * argv[]) {
         // this process is the 'child', so run the dataserver
         system("./dataserver");
     } else {
-        int num_requests = 10000;
+        int num_requests = 5;
         long long int request_times[num_requests];
         
         cout << "CLIENT STARTED:" << endl;
@@ -124,13 +125,20 @@ int main(int argc, char * argv[]) {
         usleep(1000000);
         
         
-        double average_time = 0;
+        float average_time = 0.0;
         for(int i = 0; i < num_requests; i++){
             average_time += request_times[i];
         }
         average_time = average_time/num_requests;
         
+        float standard_deviation = 0.0;
+        for(int i = 0; i < num_requests; i++){
+            standard_deviation += ((request_times[i]-average_time)*(request_times[i]-average_time));
+        }
+        standard_deviation = sqrt(standard_deviation/(num_requests-1));
+        
         cout << "-- RESULTS: Program took " << run_time/1000 << " milliseconds to perform " << num_requests << " calls" << endl;
         cout << "-- RESULTS: Average request time: " << average_time << endl;
+        cout << "-- RESULTS: Standard deviation: " << standard_deviation << endl;
     }
 }
