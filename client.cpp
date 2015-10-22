@@ -29,9 +29,12 @@
 #include <errno.h>
 #include <unistd.h>
 
+#include <chrono> // Added to measure time of requests
+
 #include "reqchannel.h"
 
 using namespace std;
+using namespace std::chrono;
 
 /*--------------------------------------------------------------------------*/
 /* DATA STRUCTURES */ 
@@ -77,6 +80,13 @@ int main(int argc, char * argv[]) {
         cout << "Establishing control channel... " << flush;
         RequestChannel chan("control", RequestChannel::CLIENT_SIDE);
         cout << "done." << endl;
+        
+        high_resolution_clock::time_point pre_request_time,         // Time at start of server request
+                                          post_request_time,        // Time at end of server request
+                                          pre_local_request_time,   // Time at start of local request
+                                          post_local_request_time;  // Time at end of local request
+        
+
 
         /* -- Start sending a sequence of requests */
 
@@ -91,8 +101,14 @@ int main(int argc, char * argv[]) {
 
         for(int i = 0; i < 100; i++) {
             string request_string("data TestPerson" + int2string(i));
+            
+            pre_request_time = high_resolution_clock::now();
             string reply_string = chan.send_request(request_string);
-            cout << "reply to request " << i << ":" << reply_string << endl;;
+            post_request_time = high_resolution_clock::now();
+            
+            auto duration = std::chrono::duration_cast<std::chrono::microseconds>( post_request_time - pre_request_time ).count();
+            
+            cout << "reply to request took " << duration << " microseconds round-trip " << i << ":" << reply_string << endl;;
         }
 
         string reply4 = chan.send_request("quit");
