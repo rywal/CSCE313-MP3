@@ -70,7 +70,7 @@ int main(int argc, char * argv[]) {
     int pid = fork();
     if (pid == 0) {
         // this process is the 'child', so run the dataserver
-        system("dataserver");
+        system("./dataserver");
     } else {
         cout << "CLIENT STARTED:" << endl;
 
