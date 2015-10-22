@@ -119,6 +119,7 @@ int main(int argc, char * argv[]) {
         RequestChannel chan("control", RequestChannel::CLIENT_SIDE);
         cout << "done." << endl;
         
+        // Declare execution time handling variables
         high_resolution_clock::time_point pre_request_time,         // Time at start of server request
                                           post_request_time,        // Time at end of server request
                                           pre_local_request_time,   // Time at start of local request
@@ -140,24 +141,27 @@ int main(int argc, char * argv[]) {
         for(int i = 0; i < num_requests; i++) {
             string request_string("data TestPerson" + int2string(i));
             
+            // Send request to dataserver
             pre_request_time = high_resolution_clock::now();
             string reply_string = chan.send_request(request_string);
             post_request_time = high_resolution_clock::now();
             
+            // Capture dataserver execution time and same to array
             auto duration = std::chrono::duration_cast<std::chrono::microseconds>( post_request_time - pre_request_time ).count();
             run_time += duration;
-            
             request_times[i] = duration;
             
+            // Print out the details of the request response
             cout << "reply to request took " << duration << " microseconds round-trip " << i << ":" << reply_string << endl;;
             
+            // Handle request locally as if it were the dataserver
             pre_local_request_time = high_resolution_clock::now();
             local_process_request(chan, request_string);
             post_local_request_time = high_resolution_clock::now();
             
+            // Calculate the time it takes, in order to compare with server request
             auto local_duration = std::chrono::duration_cast<std::chrono::microseconds>( post_local_request_time - pre_local_request_time ).count();
             local_run_time += local_duration;
-            
             local_request_times[i] = local_duration;
         }
         
@@ -166,7 +170,7 @@ int main(int argc, char * argv[]) {
 
         usleep(1000000);
         
-        
+        // Calculate time related information for server requests
         float average_time = 0.0;
         for(int i = 0; i < num_requests; i++){
             average_time += request_times[i];
@@ -179,6 +183,7 @@ int main(int argc, char * argv[]) {
         }
         standard_deviation = sqrt(standard_deviation/(num_requests-1));
         
+        // Print out server request results
         cout << " -------------------------------------------- " << endl;
         cout << "|                Server Results              |" << endl;
         cout << "|--------------------------------------------|" << endl;
@@ -188,6 +193,7 @@ int main(int argc, char * argv[]) {
         cout << "| Stand. Deviation  |" << setw(23) << standard_deviation << " |" << endl;
         cout << " -------------------------------------------- " << endl;
         
+        // Calculate the time for local requests
         float local_average_time = 0.0;
         for(int i = 0; i < num_requests; i++){
             local_average_time += local_request_times[i];
@@ -200,6 +206,7 @@ int main(int argc, char * argv[]) {
         }
         local_standard_deviation = sqrt(local_standard_deviation/(num_requests-1));
         
+        // Print out local request results
         cout << " -------------------------------------------- " << endl;
         cout << "|                Local Results               |" << endl;
         cout << "|--------------------------------------------|" << endl;
