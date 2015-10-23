@@ -70,14 +70,33 @@ string int2string(int number) {
 /* LOCAL FUNCTIONS -- INDIVIDUAL REQUESTS */
 /*--------------------------------------------------------------------------*/
 
+int local_cwrite(string _msg) {
+    
+    if (_msg.length() >= 255) {
+        cerr << "Message too long for Channel!\n";
+        return -1;
+    }
+    
+    //  cout << "Request Channel (" << my_name << ") writing [" << _msg << "]";
+    
+    const char * s = _msg.c_str();
+    
+//    if (write(0, s, strlen(s)+1) < 0) {
+//        perror(string("Request Channel ( some ) : Error writing to pipe!").c_str());
+//    }
+    
+    return 1;
+    //  cout << "(" << my_name << ") done writing." << endl;
+}
+
 void local_process_hello(RequestChannel & _channel, const string & _request) {
     //_channel.cwrite("hello to you too");
     cout << "LOCAL: hello to you too" << endl;
 }
 
 void local_process_data(RequestChannel & _channel, const string &  _request) {
-    int2string(rand() % 100);
-    //_channel.cwrite(int2string(rand() % 100));
+    //int2string(rand() % 100);
+    local_cwrite(int2string(rand() % 100));
 }
 
 /*--------------------------------------------------------------------------*/
@@ -93,7 +112,7 @@ void local_process_request(RequestChannel & _channel, const string & _request) {
         local_process_data(_channel, _request);
     }
     else {
-        _channel.cwrite("unknown request");
+        local_cwrite("unknown request");
     }
     
 }
@@ -124,8 +143,8 @@ int main(int argc, char * argv[]) {
                                           post_request_time,        // Time at end of server request
                                           pre_local_request_time,   // Time at start of local request
                                           post_local_request_time;  // Time at end of local request
-        long long int run_time;
-        long long int local_run_time;
+        double run_time;
+        double local_run_time;
 
         /* -- Start sending a sequence of requests */
 
@@ -171,49 +190,49 @@ int main(int argc, char * argv[]) {
         usleep(1000000);
         
         // Calculate time related information for server requests
-        float average_time = 0.0;
+        long double average_time = 0.0;
         for(int i = 0; i < num_requests; i++){
             average_time += request_times[i];
         }
         average_time = average_time/num_requests;
         
-        float standard_deviation = 0.0;
+        long double standard_deviation = 0.0;
         for(int i = 0; i < num_requests; i++){
             standard_deviation += ((request_times[i]-average_time)*(request_times[i]-average_time));
         }
         standard_deviation = sqrt(standard_deviation/(num_requests-1));
         
         // Print out server request results
-        cout << " -------------------------------------------- " << endl;
-        cout << "|                Server Results              |" << endl;
-        cout << "|--------------------------------------------|" << endl;
-        cout << "| Run-time:         |" << setw(10) << run_time/1000 << " milliseconds |" << endl;
-        cout << "| # of requests     |" << setw(23) << num_requests << " |" << endl;
-        cout << "| Avg. Request Time |" << setw(23) << average_time << " |" << endl;
-        cout << "| Stand. Deviation  |" << setw(23) << standard_deviation << " |" << endl;
-        cout << " -------------------------------------------- " << endl;
+        cout << " -------------------------------------------- " << endl << flush
+             << "|                Server Results              |" << endl << flush
+             << "|--------------------------------------------|" << endl << flush
+             << "| Run-time:         |" << setw(20) << run_time/1000 << " ms |" << endl << flush
+             << "| # of requests     |" << setw(23) << num_requests << " |" << endl << flush
+             << "| Avg. Request Time |" << setw(23) << average_time << " |" << endl << flush
+             << "| Stand. Deviation  |" << setw(23) << standard_deviation << " |" << endl << flush
+             << " -------------------------------------------- " << endl << flush;
         
         // Calculate the time for local requests
-        float local_average_time = 0.0;
+        long double local_average_time = 0.0;
         for(int i = 0; i < num_requests; i++){
             local_average_time += local_request_times[i];
         }
         local_average_time = local_average_time/num_requests;
         
-        float local_standard_deviation = 0.0;
+        long double local_standard_deviation = 0.0;
         for(int i = 0; i < num_requests; i++){
             local_standard_deviation += ((local_request_times[i]-local_average_time)*(local_request_times[i]-local_average_time));
         }
         local_standard_deviation = sqrt(local_standard_deviation/(num_requests-1));
         
         // Print out local request results
-        cout << " -------------------------------------------- " << endl;
-        cout << "|                Local Results               |" << endl;
-        cout << "|--------------------------------------------|" << endl;
-        cout << "| Run-time:         |" << setw(10) << local_run_time/1000 << " milliseconds |" << endl;
-        cout << "| # of requests     |" << setw(23) << num_requests << " |" << endl;
-        cout << "| Avg. Request Time |" << setw(23) << local_average_time << " |" << endl;
-        cout << "| Stand. Deviation  |" << setw(23) << local_standard_deviation << " |" << endl;
-        cout << " -------------------------------------------- " << endl;
+        cout << " -------------------------------------------- " << endl << flush
+             << "|                Local Results               |" << endl << flush
+             << "|--------------------------------------------|" << endl << flush
+             << "| Run-time:         |" << setw(20) << local_run_time/1000 << " ms |" << endl << flush
+             << "| # of requests     |" << setw(23) << num_requests << " |" << endl << flush
+             << "| Avg. Request Time |" << setw(23) << local_average_time << " |" << endl << flush
+             << "| Stand. Deviation  |" << setw(23) << local_standard_deviation << " |" << endl << flush
+             << " -------------------------------------------- " << endl << flush;
     }
 }
