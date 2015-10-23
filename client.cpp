@@ -129,8 +129,8 @@ int main(int argc, char * argv[]) {
         system("./dataserver");
     } else {
         int num_requests = 10000;
-        long long int request_times[num_requests];
-        long long int local_request_times[num_requests];
+        double request_times[num_requests];
+        double local_request_times[num_requests];
         
         cout << "CLIENT STARTED:" << endl;
 
