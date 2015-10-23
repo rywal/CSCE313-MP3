@@ -189,8 +189,10 @@ int main(int argc, char * argv[]) {
 			cout << "Memory map accessed..." << endl << endl;
 			string buffer;
 			string raw_input = "";
-			while(getline(maps, buffer)){
+			int i = 0;
+			while(getline(maps, buffer) && i < 3){
 				raw_input += buffer + '\n';
+				i++;
 			}
 			if(raw_input == ""){
 				cout << "Memory map is empty...\n";
